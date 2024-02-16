@@ -3,12 +3,17 @@
 #include <iostream>
 #include <X11/X.h>
 #include <X11/Xlib.h>
+#include <X11/extensions/xfixesproto.h>
 #include <GL/glew.h>
 #include <GL/glx.h>
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <chrono>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 #include "shader.hpp"
 #include "block.hpp"
@@ -20,6 +25,11 @@ int height = 600;
 int halfWidth = width/2;
 int halfHeight = height/2;
 
+typedef std::chrono::high_resolution_clock Clock;
+Clock::time_point lastTick;
+int tickTime = 10;
+
+
 Display                 *dpy;
 Window                  root;
 GLint                   att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
@@ -30,6 +40,8 @@ Window                  win;
 GLXContext              glc;
 XWindowAttributes       gwa;
 XEvent                  xev;
+
+bool keys[255];
 
 std::vector<Block*> blocks;
 
@@ -49,6 +61,10 @@ unsigned int VBO;
 unsigned int VAO;
 unsigned int EBO;
 
+int imgWidth, imgHeight, nrChannels;
+unsigned char *imgData = stbi_load("textures/block_textures.png", &imgWidth, &imgHeight, &nrChannels, 0);
+
+
 void DebugCallbackARB(GLenum source,
                       GLenum type,
                       GLuint id,
@@ -65,10 +81,43 @@ void DebugCallbackARB(GLenum source,
     printf("debug callback: %s\n",message);
 }
 
+void tick() {
+    lastTick = Clock::now();
+
+    // doesnt seem to make a noticible difference the order rotations and translations are applied
+
+    if (keys[25]) // w
+        camera->move(camera->direction*glm::vec3(0.075,0.075,0.075));
+        //camera->move(glm::vec3(0,0,0.1));
+    
+    if (keys[38]) // a
+        camera->move(glm::cross(glm::vec3(0,1,0),camera->direction*glm::vec3(0.075,0.075,0.075)));
+
+    if (keys[39]) // s
+        camera->move(-camera->direction*glm::vec3(0.075,0.075,0.075));
+    
+    if (keys[40]) // d
+        camera->move(glm::cross(glm::vec3(0,1,0),-camera->direction*glm::vec3(0.075,0.075,0.075)));
+
+
+    if (keys[111]) // up
+        camera->rotateY(-1);
+    
+    if (keys[116]) // down
+        camera->rotateY(1);
+
+    if (keys[113]) // left
+        camera->rotateX(1);
+    
+    if (keys[114]) // right
+        camera->rotateX(-1);
+}
+
 void render() {
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClearColor(0.0, 0.65, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    camera->updateUniforms(program);
 
     for (Block* block : blocks) {
         block->render(program);
@@ -100,13 +149,17 @@ int main() {
 
     cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
 
+    long mask = KeyPressMask
+                | KeyReleaseMask
+                | ButtonPressMask
+                | ButtonReleaseMask
+                | PointerMotionMask;
+
     swa.colormap = cmap;
-    swa.event_mask = ExposureMask
-                    | KeyPressMask
-                    | KeyReleaseMask
-                    | ButtonReleaseMask
-                    | PointerMotionMask;
+    swa.event_mask = mask;
     swa.cursor = None;
+    
+
 
     win = XCreateWindow(dpy, root, 0, 0, width, height, 0, vi->depth, InputOutput, vi->visual, CWColormap | CWEventMask | CWCursor, &swa);
 
@@ -185,43 +238,63 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     glUseProgram(program);
 
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
+    if (glGetError()) printf("error!");
+
+    stbi_image_free(imgData);
+
+
     camera = new Camera(program);
 
 
     blocks.push_back(new Block());
 
-
     
-    printf("damnit: %d\n", XGrabPointer(dpy,win,false,0,GrabModeAsync,GrabModeAsync, None, None, 0));
+    //printf("damnit: %d\n", XGrabPointer(dpy,win,true,0,GrabModeAsync,GrabModeAsync, win, None, CurrentTime));
+
+    camera->pos = glm::vec3(0,0,-6);
+    camera->direction = glm::vec3(0,0,1);
+
+    tick();
+    XGetWindowAttributes(dpy, win, &gwa);
+    glViewport(0, 0, gwa.width, gwa.height);
+    render();
 
     while(1) {
- 	    XNextEvent(dpy, &xev);
-        
-        switch (xev.type) {
-            case Expose:
-                XGetWindowAttributes(dpy, win, &gwa);
-                glViewport(0, 0, gwa.width, gwa.height);
-        	    render();
-                break;
-            
-            case KeyPress:
-                if (xev.xkey.keycode == 9) {
-                    glXMakeCurrent(dpy, None, NULL);
-                    glXDestroyContext(dpy, glc);
-                    XDestroyWindow(dpy, win);
-                    XCloseDisplay(dpy);
-                    exit(0);
-                } else {
-                    printf("keycode: %d\n",xev.xkey.keycode);
-                }
-                break;
-            case MotionNotify:
-                if (xev.xmotion.x==halfWidth && xev.xmotion.y==halfHeight) break;
-                camera->rotate(xev.xmotion.x-halfWidth,xev.xmotion.y-halfHeight);
-                //XWarpPointer(dpy,win,0, 0, width, height, halfWidth, halfHeight,0);
-                printf("pointer: x %d, y %d\n",xev.xmotion.x-halfWidth,xev.xmotion.y-halfHeight);
-                break;
+        if (XCheckWindowEvent(dpy,win,mask,&xev)) {
+            switch (xev.type) {
+                case KeyPress:
+                    keys[xev.xkey.keycode] = true;
+                    break;
+                case KeyRelease:
+                    keys[xev.xkey.keycode] = false;
+                    switch (xev.xkey.keycode) {
+                        case 9:
+                            glXMakeCurrent(dpy, None, NULL);
+                            glXDestroyContext(dpy, glc);
+                            XDestroyWindow(dpy, win);
+                            XCloseDisplay(dpy);
+                            exit(0);
+
+                        default:
+                            printf("keycode: %d\n",xev.xkey.keycode);
+                            break;
+                    }
+
+                case MotionNotify:
+                    //if (xev.xmotion.x==halfWidth && xev.xmotion.y==halfHeight) break;                
+                    //printf("pointer: x %d, y %d\n",xev.xmotion.x-halfWidth,xev.xmotion.y-halfHeight);
+                    break;
+            }
         }
+
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - lastTick).count() > tickTime)
+            tick();
+        render();
     }
 
     glDeleteProgram(program);

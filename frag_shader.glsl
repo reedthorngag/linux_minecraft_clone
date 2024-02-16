@@ -1,9 +1,11 @@
 #version 330 core
   
 out vec4 FragColor;
-in vec4 VertexColor;
+in vec2 TexCoord;
+
+uniform sampler2D block_textures;
 
 void main()
 {
-    FragColor = VertexColor;
+    FragColor = texture(block_textures,TexCoord);
 }

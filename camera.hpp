@@ -4,12 +4,15 @@ class Camera {
 
     public:
         glm::vec3 pos;
-        int rotationX;
-        int rotationY;
+        glm::vec3 origin;
+        glm::vec3 direction;
+        int rotationX = 0;
+        int rotationY = 0;
         glm::mat4 perspective;
         bool updated;
 
-        void rotate(int degreesX, int degreesY);
+        void rotateX(int degrees);
+        void rotateY(int degrees);
 
         void move(glm::vec3 movement);
 
