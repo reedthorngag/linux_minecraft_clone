@@ -9,11 +9,11 @@ uniform mat4 view;
 uniform mat4 model;
 uniform mat4 projection;
 
+uniform uint tex_offset;
+
 void main()
 {
     gl_Position = projection * view * model * vec4(aPos, 1.0);
-    //VertexColor = vec4(1.0, 1.0, 1.0, 1.0);
-    // 0.015625 
-    // x=1 y = 0
-    TexCoord = tex;
+
+    TexCoord = vec2((tex_offset+tex.x)*0.006836,tex.y*0.0136);
 }
