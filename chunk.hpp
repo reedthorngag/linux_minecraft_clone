@@ -7,7 +7,7 @@
 #define _Chunk
 
 const int CHUNK_HEIGHT = 10;
-const int CHUNK_SIZE = 16;
+const int CHUNK_SIZE = 100;
 
 struct block_data {
     short block_id;

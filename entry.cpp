@@ -81,23 +81,26 @@ void DebugCallbackARB(GLenum source,
     printf("debug callback: %s\n",message);
 }
 
+float speed = 0.075;
+float speed_scale;
+
 void tick() {
     lastTick = Clock::now();
 
     // doesnt seem to make a noticible difference the order rotations and translations are applied
 
     if (keys[25]) // w
-        camera->move(camera->direction*glm::vec3(0.075,0.075,0.075));
+        camera->move(camera->direction*(glm::vec3(speed,speed,speed)*glm::vec3(keys[50]?3:1)));
         //camera->move(glm::vec3(0,0,0.1));
     
     if (keys[38]) // a
-        camera->move(glm::cross(glm::vec3(0,1,0),camera->direction*glm::vec3(0.075,0.075,0.075)));
+        camera->move(glm::cross(glm::vec3(0,1,0),camera->direction*(glm::vec3(speed,speed,speed)*glm::vec3(keys[50]?3:1))));
 
     if (keys[39]) // s
-        camera->move(-camera->direction*glm::vec3(0.075,0.075,0.075));
+        camera->move(-camera->direction*(glm::vec3(speed,speed,speed)*glm::vec3(keys[50]?3:1)));
     
     if (keys[40]) // d
-        camera->move(glm::cross(glm::vec3(0,1,0),-camera->direction*glm::vec3(0.075,0.075,0.075)));
+        camera->move(glm::cross(glm::vec3(0,1,0),-camera->direction*(glm::vec3(speed,speed,speed)*glm::vec3(keys[50]?3:1))));
 
 
     if (keys[111]) // up
@@ -300,7 +303,13 @@ int main() {
 
         if (std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - lastTick).count() > tickTime)
             tick();
+        
+        std::chrono::time_point start = Clock::now();
         render();
+        std::chrono::time_point end = Clock::now();
+        long long int ms = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
+        if (ms)
+            printf("\r ms: %d, fps: %d      \r",(int)ms, (int)(1000/ms));
     }
 
     glDeleteProgram(program);

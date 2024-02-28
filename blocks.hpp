@@ -56,8 +56,15 @@ enum blocks {
 };
 
 
+const int texture_map[] = {
+    0, // air
+    1, // grass
+    3, // dirt
+    4, // stone
+};
+
 // texpos,  north, east, south, west, top, bottom
-const int texture_map[][6] = {
+const int texture_face_map[][6] = {
     {0},
     {0,0,0,0,1,2}, // grass
     {0}, // dirt
