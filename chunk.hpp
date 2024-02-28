@@ -1,4 +1,5 @@
 #include <glm/glm.hpp>
+#include <GL/glew.h>
 
 #include "block.hpp"
 
@@ -10,18 +11,33 @@ const int CHUNK_SIZE = 16;
 
 struct block_data {
     short block_id;
-    Block* block;
+    glm::uvec3 pos;
+};
+
+struct face_data {
+    int offset;
+    short tex_offset;
 };
 
 class Chunk {
 
     public:
-        const block_data* layers[CHUNK_HEIGHT] = {0};
-        const short solid_layers[CHUNK_HEIGHT] = {0};
+        const short* layers[CHUNK_HEIGHT] = {0};
+        short solid_layers[CHUNK_HEIGHT] = {0};
+
+        GLuint program;
+        glm::ivec2 pos;
+
+        GLuint VAO;
+        GLuint VBO;
+        unsigned char* mesh_data;
+        unsigned int* offsets;
+        unsigned int count;
 
         void render();
+        void gen_mesh();
 
-        Chunk(glm::ivec2 pos);
+        Chunk(unsigned int program, glm::ivec2 pos);
         ~Chunk();
 };
 

@@ -16,7 +16,7 @@
 #include "stb_image.h"
 
 #include "shader.hpp"
-#include "block.hpp"
+#include "chunk.hpp"
 #include "camera.hpp"
 
 int width = 800;
@@ -43,7 +43,7 @@ XEvent                  xev;
 
 bool keys[255];
 
-std::vector<Block*> blocks;
+std::vector<Chunk*> chunks;
 
 unsigned int indices[] {
     0,1,2
@@ -119,8 +119,8 @@ void render() {
 
     camera->updateUniforms(program);
 
-    for (Block* block : blocks) {
-        block->render(program);
+    for (Chunk* chunk : chunks) {
+        chunk->render();
     }
 
     glXSwapBuffers(dpy, win);
@@ -176,7 +176,15 @@ int main() {
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
     std::cout << "Maximum number of vertex attributes supported: " << nrAttributes << std::endl;
 
-    glewInit();
+    GLenum err = glewInit();
+    if (err != GLEW_OK) {
+	printf("error: %s",glewGetErrorString(err));
+	exit(1);
+    } 
+
+    printf("GL Version: %s\n",glGetString(GL_VERSION));
+
+    if (!GLEW_VERSION_2_1) exit(1);
 
     if (glDebugMessageCallbackARB != NULL) {
         glDebugMessageCallbackARB(&DebugCallbackARB, nullptr);
@@ -210,7 +218,6 @@ int main() {
 
         return 1;
     }
-
 
     glValidateProgram(program);
 
@@ -248,11 +255,9 @@ int main() {
 
     stbi_image_free(imgData);
 
-
     camera = new Camera(program);
 
-
-    blocks.push_back(new Block());
+    chunks.push_back(new Chunk(program, glm::ivec2(0,0)));
 
     
     //printf("damnit: %d\n", XGrabPointer(dpy,win,true,0,GrabModeAsync,GrabModeAsync, win, None, CurrentTime));
