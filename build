@@ -2,4 +2,4 @@
 
 #g++ -Wall -W -Werror *.cpp -o output -lGLU -lGL -lX11 || exit 1
 
-g++ -Wall -W -Werror *.cpp -o bin/output -lGLU -lGL -lGLEW -lX11 || exit 1
+g++ -Wall -g -W -Werror *.cpp -o bin/output -lGLU -lGL -lGLEW -lX11 || exit 1

@@ -45,15 +45,6 @@ bool keys[255];
 
 std::vector<Chunk*> chunks;
 
-unsigned int indices[] {
-    0,1,2
-};
-float vertices[] = {
-    0.0, 1.0, -0.1,
-    0.5, 0.0, -0.1,
-    -0.5,0.0, -0.1
-};
-
 GLuint program;
 Camera* camera;
 
@@ -260,7 +251,7 @@ int main() {
 
     camera = new Camera(program);
 
-    chunks.push_back(new Chunk(program, glm::ivec2(0,0)));
+    chunks.push_back(new Chunk(program, glm::vec3(0.0)));
 
     
     //printf("damnit: %d\n", XGrabPointer(dpy,win,true,0,GrabModeAsync,GrabModeAsync, win, None, CurrentTime));

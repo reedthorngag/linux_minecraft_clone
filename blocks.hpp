@@ -1,5 +1,8 @@
 
 
+#ifndef _BLOCKS
+#define _BLOCKS
+
 // north is positive z
 // east is positive x
 
@@ -36,17 +39,35 @@ const float CUBE_VERTICES[]{
 
 };
 
-enum face_offset {
-    NORTH = 0,
-    EAST = 4,
-    SOUTH = 8,
-    WEST = 12,
-    TOP = 16,
-    BOTTOM = 20
+const unsigned int INDICES[] {
+    0,1,2, 1,2,3,
+    4,5,6, 5,6,7,
+    8,9,10, 9,10,11,
+    12,13,14, 13,14,15,
+    16,17,18, 17,18,19,
+    20,21,22, 21,22,23,
 };
 
-const int face_vertex_count = 4;
+const int face_size = sizeof(float) * 5 * 4;
 
+
+enum faces {
+    NORTH  = 0,
+    EAST   = 1,
+    SOUTH  = 2,
+    WEST   = 3,
+    TOP    = 4,
+    BOTTOM = 5
+};
+
+const short face_offset[] {
+    face_size*0,
+    face_size*1,
+    face_size*2,
+    face_size*3,
+    face_size*4,
+    face_size*5
+};
 
 enum blocks {
     AIR = 0,
@@ -71,3 +92,4 @@ const int texture_face_map[][6] = {
     {0}, // stone
 };
 
+#endif
