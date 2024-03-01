@@ -9,39 +9,41 @@
 #include "blocks.hpp"
 
 void Chunk::render() {
+
+    glUseProgram(this->program);
     
     GLuint model_loc = glGetUniformLocation(program, "model");
 
-    glm::mat4 model = glm::translate(glm::mat4(1.0),this->pos);
+    glm::mat4 model = glm::translate(glm::mat4(1.0),glm::vec3(0));
 
     glUniformMatrix4fv(model_loc,1,false,&model[0][0]);
 
+    this->gen_mesh();
+
     glBindVertexArray(this->VAO);
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(CUBE_VERTICES), CUBE_VERTICES, GL_STATIC_DRAW);
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(INDICES)/sizeof(unsigned int), INDICES, GL_STATIC_DRAW);
-
-    glBindVertexArray(this->VAO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-    glDrawElements(GL_TRIANGLES, count*2*3, GL_UNSIGNED_INT, NULL);
+    glDrawElements(GL_TRIANGLES, this->count * 6, GL_UNSIGNED_INT, NULL);
 }
 
 void Chunk::add_face(std::vector<face*>* _faces,short pos[3],faces _face) {
-    short block_id = this->layers[pos[2]]==nullptr? this->solid_layers[pos[2]] : this->layers[pos[2]][pos[1]*CHUNK_SIZE+pos[0]];
+    short block_id = this->layers[pos[1]]==nullptr? this->solid_layers[pos[1]] : this->layers[pos[1]][pos[2]*CHUNK_SIZE+pos[0]];
 
     face* face = new struct face;
 
     memcpy(face->face_data,(float*)((long)CUBE_VERTICES+face_offset[_face]),DATA_SIZE);
 
+    for (int i=0;i<4;i++) {
+        for (int j=0;j<3;j++) {
+            face->face_data[i*5+j] += pos[j];
+        }
+    }
+
     int tex_pos = texture_map[block_id];
 
     for (short i=0;i<4;i++) {
-        face->face_data[i*VERTEX_SIZE+(sizeof(float)*3)] += tex_pos+texture_face_map[block_id][i];
+        face->face_data[i*5+3] += tex_pos+texture_face_map[block_id][_face];
     }
-
-    face->indices = (unsigned int*)&INDICES[_face*6];
     
     _faces->push_back(face);
 }
@@ -49,10 +51,10 @@ void Chunk::add_face(std::vector<face*>* _faces,short pos[3],faces _face) {
 void Chunk::gen_mesh() {
     std::vector<face*> faces;
     for (short x=0;x<CHUNK_SIZE;x++) {
-        for (short y=0;y<CHUNK_SIZE;y++) {
-            short height = this->heightmap[y*CHUNK_SIZE+x];
+        for (short z=0;z<CHUNK_SIZE;z++) {
+            short height = this->heightmap[z*CHUNK_SIZE+x];
 
-            short pos[3]{x,y,height};
+            short pos[3]{x,height,z};
 
             this->add_face(&faces,pos,faces::TOP);
         }
@@ -65,36 +67,45 @@ void Chunk::gen_mesh() {
     float* _vertices = vertices;
     unsigned int* _indices = indices;
 
+    int n=0;
     for (face* face : faces) {
         memcpy(_vertices,face->face_data,DATA_SIZE);
         _vertices += 5 * 4;
 
+        for (short i = 0; i<6; i++) {
+            face->indices[i] += n;
+        }
+        n += 3;
+        
         memcpy(_indices,face->indices,sizeof(unsigned int) * 6);
         _indices += 6;
 
+        /*
         for (int i=0;i<4;i++) {
             printf("%f, %f, %f,  %f, %f,\n",vertices[i*5+0],vertices[i*5+1],vertices[i*5+2],vertices[i*5+3],vertices[i*5+4]);
         }
 
         printf("%u, %u, %u,  %u, %u, %u\n",face->indices[0],face->indices[1],face->indices[2],face->indices[3],face->indices[4],face->indices[5]);
+        /**/
 
         delete face;
+        n++;
     }
 
     this->count = count;
 
+    glUseProgram(this->program);
+
     glBindVertexArray(this->VAO);
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-	glBufferData(GL_ARRAY_BUFFER, count * DATA_SIZE, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, count * 5 * 4 * sizeof(float), vertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int) * 6, indices, GL_STATIC_DRAW);
-
-    printf("4\n");
+    glDrawElements(GL_TRIANGLES, count * 6, GL_STATIC_DRAW, NULL);
 
     delete vertices;
     delete indices;
-    printf("5\n");
 }
 
 Chunk::Chunk(unsigned int program, glm::vec3 pos) {

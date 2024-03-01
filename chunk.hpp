@@ -7,8 +7,8 @@
 #ifndef _Chunk
 #define _Chunk
 
-const int CHUNK_HEIGHT = 1;
-const int CHUNK_SIZE = 1;
+const int CHUNK_HEIGHT = 5;
+const int CHUNK_SIZE = 16;
 
 
 const int VERTEX_SIZE = sizeof(float)*(3+2);
@@ -16,7 +16,7 @@ const int DATA_SIZE = VERTEX_SIZE*4;
 
 struct face {
     float face_data[DATA_SIZE]; // 3 * float vertices + 2 * float tex coords * 4
-    unsigned int* indices;
+    unsigned int indices[6] {0,1,2, 1,2,3};
 };
 
 class Chunk {
