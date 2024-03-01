@@ -26,7 +26,7 @@ class Chunk {
         short solid_layers[CHUNK_HEIGHT] = {0};
 
         GLuint program;
-        glm::vec3 pos;
+        int* pos;
 
         GLuint VAO;
         GLuint VBO;
@@ -41,8 +41,9 @@ class Chunk {
         void render();
         void add_face(std::vector<face*>* _faces,short pos[3],faces _face);
         void gen_mesh();
+        short get_block(short pos[3]);
 
-        Chunk(unsigned int program, glm::vec3 pos);
+        Chunk(unsigned int program, int pos[2]);
         ~Chunk();
 };
 

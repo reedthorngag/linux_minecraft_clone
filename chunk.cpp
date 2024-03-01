@@ -7,6 +7,7 @@
 
 #include "chunk.hpp"
 #include "blocks.hpp"
+#include "world.hpp"
 
 void Chunk::render() {
 
@@ -26,8 +27,12 @@ void Chunk::render() {
     glDrawElements(GL_TRIANGLES, this->count * 6, GL_UNSIGNED_INT, NULL);
 }
 
+short Chunk::get_block(short pos[3]) {
+    return this->layers[pos[1]]==nullptr ? this->solid_layers[pos[1]] : this->layers[pos[1]][pos[2]*CHUNK_SIZE+pos[0]];
+}
+
 void Chunk::add_face(std::vector<face*>* _faces,short pos[3],faces _face) {
-    short block_id = this->layers[pos[1]]==nullptr? this->solid_layers[pos[1]] : this->layers[pos[1]][pos[2]*CHUNK_SIZE+pos[0]];
+    short block_id = this->get_block(pos);
 
     face* face = new struct face;
 
@@ -57,6 +62,23 @@ void Chunk::gen_mesh() {
             short pos[3]{x,height,z};
 
             this->add_face(&faces,pos,faces::TOP);
+
+            /*bool block = false;
+            if (pos[0]-1 < 0) {
+                int chunkpos[2]{this->pos[0]-1,this->pos[1]};
+
+                Chunk* chunk = chunks.getChunk(chunkpos);
+                if (chunk) {
+                    short blockpos[3] {CHUNK_SIZE-1,height,z};
+                    block = chunk->get_block(blockpos);
+                }
+            } else {
+                short chunkpos[3]{(short)(x-1),height,z};
+                block = this->get_block(chunkpos);
+            }
+            if (!block) {
+                this->add_face(&faces,pos,faces::NORTH);
+            }*/
         }
     }
 
@@ -76,17 +98,17 @@ void Chunk::gen_mesh() {
             face->indices[i] += n;
         }
         n += 3;
-        
+
         memcpy(_indices,face->indices,sizeof(unsigned int) * 6);
         _indices += 6;
 
-        /*
+        
         for (int i=0;i<4;i++) {
             printf("%f, %f, %f,  %f, %f,\n",vertices[i*5+0],vertices[i*5+1],vertices[i*5+2],vertices[i*5+3],vertices[i*5+4]);
         }
 
         printf("%u, %u, %u,  %u, %u, %u\n",face->indices[0],face->indices[1],face->indices[2],face->indices[3],face->indices[4],face->indices[5]);
-        /**/
+        
 
         delete face;
         n++;
@@ -108,7 +130,7 @@ void Chunk::gen_mesh() {
     delete indices;
 }
 
-Chunk::Chunk(unsigned int program, glm::vec3 pos) {
+Chunk::Chunk(unsigned int program, int pos[2]) {
     (void)program;
     (void)pos;
 
@@ -151,7 +173,7 @@ Chunk::Chunk(unsigned int program, glm::vec3 pos) {
 }
 
 Chunk::~Chunk() {
-
+    delete this->pos;
 }
 
 

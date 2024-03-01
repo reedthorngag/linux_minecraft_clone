@@ -6,7 +6,6 @@
 #include <X11/extensions/xfixesproto.h>
 #include <GL/glew.h>
 #include <GL/glx.h>
-#include <vector>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -18,6 +17,7 @@
 #include "shader.hpp"
 #include "chunk.hpp"
 #include "camera.hpp"
+#include "world.hpp"
 
 int width = 800;
 int height = 600;
@@ -42,8 +42,6 @@ XWindowAttributes       gwa;
 XEvent                  xev;
 
 bool keys[255];
-
-std::vector<Chunk*> chunks;
 
 GLuint program;
 Camera* camera;
@@ -113,9 +111,8 @@ void render() {
 
     camera->updateUniforms(program);
 
-    for (Chunk* chunk : chunks) {
-        chunk->render();
-    }
+    int pos[] {0,0};
+    chunks.getChunk(pos);
 
     glXSwapBuffers(dpy, win);
 } 
@@ -251,7 +248,8 @@ int main() {
 
     camera = new Camera(program);
 
-    chunks.push_back(new Chunk(program, glm::vec3(0.0)));
+    int pos[2]{0,0};
+    chunks.setChunk(pos,new Chunk(program, new int[2]{0,0}));
 
     
     //printf("damnit: %d\n", XGrabPointer(dpy,win,true,0,GrabModeAsync,GrabModeAsync, win, None, CurrentTime));
