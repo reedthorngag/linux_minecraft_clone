@@ -21,10 +21,10 @@ void Chunk::render() {
 
     this->gen_mesh();
 
-    glBindVertexArray(this->VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-    glDrawElements(GL_TRIANGLES, this->count * 6, GL_UNSIGNED_INT, NULL);
+    //glBindVertexArray(this->VAO);
+    //glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+    //glDrawElements(GL_TRIANGLES, this->count * 6, GL_UNSIGNED_INT, NULL);
 }
 
 short Chunk::get_block(short pos[3]) {
@@ -131,9 +131,6 @@ void Chunk::gen_mesh() {
 }
 
 Chunk::Chunk(unsigned int program, int pos[2]) {
-    (void)program;
-    (void)pos;
-
     this->program = program;
     this->pos = pos;
 
@@ -148,6 +145,8 @@ Chunk::Chunk(unsigned int program, int pos[2]) {
     for (int i=0;i<CHUNK_SIZE*CHUNK_SIZE;i++) {
         this->heightmap[i] = CHUNK_HEIGHT-1;
     }
+
+    glUseProgram(this->program);
 
     glGenVertexArrays(1,&this->VAO);
 
@@ -168,8 +167,6 @@ Chunk::Chunk(unsigned int program, int pos[2]) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 
     glBindVertexArray(0);
-
-    gen_mesh();
 }
 
 Chunk::~Chunk() {

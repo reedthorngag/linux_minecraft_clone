@@ -112,7 +112,7 @@ void render() {
     camera->updateUniforms(program);
 
     int pos[] {0,0};
-    chunks.getChunk(pos);
+    chunks.getChunk(pos)->render();
 
     glXSwapBuffers(dpy, win);
 } 
