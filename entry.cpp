@@ -111,8 +111,12 @@ void render() {
 
     camera->updateUniforms(program);
 
-    int pos[] {0,0};
-    chunks.getChunk(pos)->render();
+    for (int x=-12; x<12; x++) {
+        for (int y=-12;y<12;y++) {
+            int pos[2]{x,y};
+            chunks.getChunk(pos)->render();
+        }
+    }
 
     glXSwapBuffers(dpy, win);
 } 
@@ -248,8 +252,13 @@ int main() {
 
     camera = new Camera(program);
 
-    int pos[2]{0,0};
-    chunks.setChunk(pos,new Chunk(program, new int[2]{0,0}));
+    for (int x=-12; x<12; x++) {
+        for (int y=-12;y<12;y++) {
+            int pos[2]{x,y};
+            chunks.setChunk(pos,new Chunk(program, new int[2]{x,y}));
+            chunks.getChunk(pos)->gen_mesh();
+        }
+    }
 
     
     //printf("damnit: %d\n", XGrabPointer(dpy,win,true,0,GrabModeAsync,GrabModeAsync, win, None, CurrentTime));
@@ -277,6 +286,21 @@ int main() {
                             XDestroyWindow(dpy, win);
                             XCloseDisplay(dpy);
                             exit(0);
+                        
+                        case 27: // r
+                            {
+                            std::chrono::time_point start1 = Clock::now();
+                            for (int x=-6; x<6; x++) {
+                                for (int y=-6;y<6;y++) {
+                                    int pos[2]{x,y};
+                                    chunks.getChunk(pos)->gen_mesh();
+                                }
+                            }
+                            std::chrono::time_point end1 = Clock::now();
+                            long long int ms1 = std::chrono::duration_cast<std::chrono::milliseconds>(end1-start1).count();
+                            printf("\n total chuck mesh time: %dms  \n",(int)ms1);
+                            break;
+                            }
 
                         default:
                             printf("keycode: %d\n",xev.xkey.keycode);

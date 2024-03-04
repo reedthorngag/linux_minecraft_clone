@@ -7,6 +7,8 @@
 #ifndef _WORLD
 #define _WORLD
 
+const int RENDER_DISTANCE = 24;
+
 class ChunkMap {
     public:
         std::unordered_map<std::string,Chunk*> chunks;
