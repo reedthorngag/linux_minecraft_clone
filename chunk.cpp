@@ -57,7 +57,7 @@ void Chunk::gen_mesh() {
     std::vector<face*> faces;
     for (short x=0;x<CHUNK_SIZE;x++) {
         for (short z=0;z<CHUNK_SIZE;z++) {
-            for (short y=0; y<CHUNK_HEIGHT; y++) {
+            for (short y=0; y<this->heightmap[z*CHUNK_SIZE+x]; y++) {
 
                 short pos[3] {x,y,z};
 
