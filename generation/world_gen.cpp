@@ -1,40 +1,60 @@
 #include <random>
 #include <math.h>
 
-#include "../include/OpenSimplexNoise.h"
-
 #include "world_gen.hpp"
+#include "noise.hpp"
 #include "../chunk.hpp"
 #include "../blocks.hpp"
 
 
 void Generator::generateChunk(Chunk* chunk) {
-    OpenSimplexNoise::Noise noise;
+
+    // const int size = 1000;
+    // double array[size*size];
+
+    // for (int x=0;x<size;x++) {
+    //     for (int y=0;y<size;y++) {
+    //         array[x*size+y] = noise.eval(x,y);
+    //     }
+    // }
+
+    // double min = 1000;
+    // double max = -1000;
+
+    // for (int n=0;n<size*size;n++) {
+    //     if (array[n]<min) min = array[n];
+    //     else if (array[n]>max) max = array[n];
+    // }
+
+    // printf("\nmin: %lf, max: %lf \n",min,max);
+    // printf("min: %lf, max: %lf \n",round((min+1)*8),round((max+1)*8));
+    // exit(1);
 
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int z = 0; z < CHUNK_SIZE; z++) {
-            int y =  (int)round(
-                (noise.eval(chunk->pos[0]*CHUNK_SIZE+x,chunk->pos[1]*CHUNK_SIZE+z) + 0.5) * 
-                (CHUNK_HEIGHT-2) + 
-                4); 
+            double input1 = (chunk->pos[0]*CHUNK_SIZE+x)*0.03;
+            double input2 = (chunk->pos[1]*CHUNK_SIZE+z)*0.03;
+            int y =  (int)round((genNoise(input1,input2))+ 4);
+
+            //printf(",  %d,  ",y);
 
             int pos = z*CHUNK_SIZE+x;
             chunk->heightmap[pos] = y;
 
             if (!chunk->layers[y])
-                chunk->layers[y] = new short[CHUNK_SIZE*CHUNK_SIZE];
+                chunk->layers[y] = new short[CHUNK_SIZE*CHUNK_SIZE]{0};
 
             chunk->layers[y--][pos] = blocks::GRASS;
 
             for (int i=0;i<3;i++) {
                 if (!chunk->layers[y])
-                    chunk->layers[y] = new short[CHUNK_SIZE*CHUNK_SIZE];
+                    chunk->layers[y] = new short[CHUNK_SIZE*CHUNK_SIZE]{0};
                 chunk->layers[y--][pos] = blocks::DIRT;
             }
 
             for (;y >= 0; y--) {
                 if (!chunk->layers[y])
-                    chunk->layers[y] = new short[CHUNK_SIZE*CHUNK_SIZE];
+                    chunk->layers[y] = new short[CHUNK_SIZE*CHUNK_SIZE]{0};
                 chunk->layers[y][pos] = blocks::STONE;
             }
         }

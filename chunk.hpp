@@ -7,7 +7,7 @@
 #ifndef _Chunk
 #define _Chunk
 
-const int CHUNK_HEIGHT = 48;
+const int CHUNK_HEIGHT = 256;
 const int CHUNK_SIZE = 16;
 
 const int VERTEX_SIZE = sizeof(float)*(3+2);

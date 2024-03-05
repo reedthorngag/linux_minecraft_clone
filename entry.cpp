@@ -22,8 +22,6 @@
 
 extern ChunkMap chunks;
 
-const int SIZE = 3;
-
 int width = 800;
 int height = 600;
 
@@ -116,8 +114,8 @@ void render() {
 
     camera->updateUniforms(program);
 
-    for (int x=-SIZE; x<SIZE; x++) {
-        for (int y=-SIZE;y<SIZE;y++) {
+    for (int x=-(RENDER_DISTANCE/2); x<(RENDER_DISTANCE/2); x++) {
+        for (int y=-(RENDER_DISTANCE/2);y<(RENDER_DISTANCE/2);y++) {
             int pos[2]{x,y};
             chunks.getChunk(pos)->render();
         }
@@ -260,13 +258,15 @@ int main() {
 
     Generator gen;
     double count = 0;
-    double total = SIZE*4;
+    double total = RENDER_DISTANCE*2;
+
+    printf(" %d %d \n\n",RENDER_DISTANCE,RENDER_DISTANCE/2);
 
     setbuf(stdout, NULL);
     printf("\n\nGenerating chunks... 0%%");
 
-    for (int x=-SIZE; x<SIZE; x++) {
-        for (int y=-SIZE;y<SIZE;y++) {
+    for (int x=-(RENDER_DISTANCE/2); x<(RENDER_DISTANCE/2); x++) {
+        for (int y=-(RENDER_DISTANCE/2);y<(RENDER_DISTANCE/2);y++) {
             int pos[2]{x,y};
             Chunk* chunk = new Chunk(program, new int[2]{x,y});
             chunks.setChunk(pos,chunk);
@@ -278,8 +278,8 @@ int main() {
     printf("\nMeshing chunks... 0%%");
     count = 0;
 
-    for (int x=-SIZE; x<SIZE; x++) {
-        for (int y=-SIZE;y<SIZE;y++) {
+    for (int x=-(RENDER_DISTANCE/2); x<(RENDER_DISTANCE/2); x++) {
+        for (int y=-(RENDER_DISTANCE/2);y<(RENDER_DISTANCE/2);y++) {
             int pos[2]{x,y};
             chunks.getChunk(pos)->gen_mesh();
             printf("\rMeshing chunks... %f",(count++/total));
@@ -289,7 +289,7 @@ int main() {
     
     //printf("damnit: %d\n", XGrabPointer(dpy,win,true,0,GrabModeAsync,GrabModeAsync, win, None, CurrentTime));
 
-    camera->pos = glm::vec3(0,0,-6);
+    camera->pos = glm::vec3(0,30,0);
     camera->direction = glm::vec3(0,0,1);
 
     tick();
@@ -316,8 +316,8 @@ int main() {
                         case 27: // r
                             {
                             std::chrono::time_point start1 = Clock::now();
-                            for (int x=-SIZE; x<SIZE; x++) {
-                                for (int y=-SIZE;y<SIZE;y++) {
+                            for (int x=-(RENDER_DISTANCE/2); x<(RENDER_DISTANCE/2); x++) {
+                                for (int y=-(RENDER_DISTANCE/2);y<(RENDER_DISTANCE/2);y++) {
                                     int pos[2]{x,y};
                                     chunks.getChunk(pos)->gen_mesh();
                                 }
