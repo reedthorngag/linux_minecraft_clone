@@ -201,18 +201,6 @@ Chunk::Chunk(unsigned int program, int pos[2]) {
     this->program = program;
     this->pos = pos;
 
-    for (int i=0;i<CHUNK_HEIGHT;i++) {
-        this->layers[i] = nullptr;
-        this->solid_layers[i] = blocks::DIRT;
-    }
-
-    this->solid_layers[0] = blocks::STONE;
-    this->solid_layers[CHUNK_HEIGHT-1] = blocks::GRASS;
-
-    for (int i=0;i<CHUNK_SIZE*CHUNK_SIZE;i++) {
-        this->heightmap[i] = CHUNK_HEIGHT-1;
-    }
-
     glUseProgram(this->program);
 
     glGenVertexArrays(1,&this->VAO);

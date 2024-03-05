@@ -12,16 +12,17 @@
 #include <chrono>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "./include/stb_image.h"
 
 #include "shader.hpp"
 #include "chunk.hpp"
 #include "camera.hpp"
 #include "world.hpp"
+#include "./generation/world_gen.hpp"
 
 extern ChunkMap chunks;
 
-const int SIZE = 24;
+const int SIZE = 3;
 
 int width = 800;
 int height = 600;
@@ -256,17 +257,32 @@ int main() {
 
     camera = new Camera(program);
 
+
+    Generator gen;
+    double count = 0;
+    double total = SIZE*4;
+
+    setbuf(stdout, NULL);
+    printf("\n\nGenerating chunks... 0%%");
+
     for (int x=-SIZE; x<SIZE; x++) {
         for (int y=-SIZE;y<SIZE;y++) {
             int pos[2]{x,y};
-            chunks.setChunk(pos,new Chunk(program, new int[2]{x,y}));
+            Chunk* chunk = new Chunk(program, new int[2]{x,y});
+            chunks.setChunk(pos,chunk);
+            gen.generateChunk(chunk);
+            printf("\rGenerating chunks... %f",(count++/total));
         }
     }
+
+    printf("\nMeshing chunks... 0%%");
+    count = 0;
 
     for (int x=-SIZE; x<SIZE; x++) {
         for (int y=-SIZE;y<SIZE;y++) {
             int pos[2]{x,y};
             chunks.getChunk(pos)->gen_mesh();
+            printf("\rMeshing chunks... %f",(count++/total));
         }
     }
 
