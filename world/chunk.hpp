@@ -20,6 +20,15 @@ struct face {
 
 class Chunk {
 
+    private:
+        GLuint VAO;
+        GLuint VBO;
+        GLuint EBO;
+
+        unsigned int count = 0;
+
+        void add_face(std::vector<face*>* _faces,short pos[3],faces _face);
+
     public:
         short* layers[CHUNK_HEIGHT] = {0};
         short solid_layers[CHUNK_HEIGHT] = {0};
@@ -27,18 +36,9 @@ class Chunk {
         GLuint program;
         int* pos;
 
-        GLuint VAO;
-        GLuint VBO;
-        GLuint EBO;
-
-        float* vertice_data;
-        unsigned int* indice_data;
-        unsigned int count = 0;
-
         short heightmap[CHUNK_SIZE*CHUNK_SIZE] = { 0 };
 
         void render();
-        void add_face(std::vector<face*>* _faces,short pos[3],faces _face);
         void gen_mesh();
         short get_block(short pos[3]);
 

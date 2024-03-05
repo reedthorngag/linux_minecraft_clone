@@ -3,8 +3,8 @@
 
 #include "world_gen.hpp"
 #include "noise.hpp"
-#include "../../chunk.hpp"
-#include "../../blocks.hpp"
+#include "../chunk.hpp"
+#include "../blocks.hpp"
 
 
 void Generator::generateChunk(Chunk* chunk) {

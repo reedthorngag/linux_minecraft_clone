@@ -15,10 +15,11 @@
 #include "./include/stb_image.h"
 
 #include "shader.hpp"
-#include "chunk.hpp"
+#include "world/chunk.hpp"
 #include "camera.hpp"
-#include "world.hpp"
-#include "./generation/world_gen.hpp"
+#include "world/world.hpp"
+#include "world/generation/world_gen.hpp"
+#include "world/world_loader.hpp"
 
 extern ChunkMap chunks;
 
