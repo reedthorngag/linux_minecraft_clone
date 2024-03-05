@@ -19,6 +19,10 @@
 #include "camera.hpp"
 #include "world.hpp"
 
+extern ChunkMap chunks;
+
+const int SIZE = 24;
+
 int width = 800;
 int height = 600;
 
@@ -111,8 +115,8 @@ void render() {
 
     camera->updateUniforms(program);
 
-    for (int x=-12; x<12; x++) {
-        for (int y=-12;y<12;y++) {
+    for (int x=-SIZE; x<SIZE; x++) {
+        for (int y=-SIZE;y<SIZE;y++) {
             int pos[2]{x,y};
             chunks.getChunk(pos)->render();
         }
@@ -246,16 +250,22 @@ int main() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, imgData);
-    if (glGetError()) printf("error!");
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(imgData);
 
     camera = new Camera(program);
 
-    for (int x=-12; x<12; x++) {
-        for (int y=-12;y<12;y++) {
+    for (int x=-SIZE; x<SIZE; x++) {
+        for (int y=-SIZE;y<SIZE;y++) {
             int pos[2]{x,y};
             chunks.setChunk(pos,new Chunk(program, new int[2]{x,y}));
+        }
+    }
+
+    for (int x=-SIZE; x<SIZE; x++) {
+        for (int y=-SIZE;y<SIZE;y++) {
+            int pos[2]{x,y};
             chunks.getChunk(pos)->gen_mesh();
         }
     }
@@ -290,8 +300,8 @@ int main() {
                         case 27: // r
                             {
                             std::chrono::time_point start1 = Clock::now();
-                            for (int x=-6; x<6; x++) {
-                                for (int y=-6;y<6;y++) {
+                            for (int x=-SIZE; x<SIZE; x++) {
+                                for (int y=-SIZE;y<SIZE;y++) {
                                     int pos[2]{x,y};
                                     chunks.getChunk(pos)->gen_mesh();
                                 }

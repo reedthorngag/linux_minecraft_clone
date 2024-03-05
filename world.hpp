@@ -11,25 +11,12 @@ const int RENDER_DISTANCE = 24;
 
 class ChunkMap {
     public:
-        std::unordered_map<std::string,Chunk*> chunks;
+        std::unordered_map<std::string,Chunk*> _chunks;
 
-        void setChunk(int pos[2], Chunk* chunk) {
-            std::string s;
-            s += pos[0];
-            s += ',';
-            s += pos[1];
-            chunks[s] = chunk;
-        }
-        Chunk* getChunk(int pos[2]) {
-            std::string s;
-            s += pos[0];
-            s += ',';
-            s += pos[1];
-            return chunks[s];
-        }
+        void setChunk(int pos[2], Chunk* chunk);
+        Chunk* getChunk(int pos[2]);
 };
 
-static ChunkMap chunks;
-
+extern ChunkMap chunks;
 
 #endif

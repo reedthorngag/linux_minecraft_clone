@@ -9,6 +9,8 @@
 #include "blocks.hpp"
 #include "world.hpp"
 
+extern ChunkMap chunks;
+
 void Chunk::render() {
 
     glUseProgram(this->program);
@@ -61,12 +63,10 @@ void Chunk::gen_mesh() {
 
                 bool block = false;
                 if (pos[0]-1 < 0) {
-                    int chunkpos[2]{0,0};
+                    int chunkpos[2]{this->pos[0]-1,this->pos[1]};
 
                     Chunk* chunk = chunks.getChunk(chunkpos);
-                    printf("regth: %lu\n",(long unsigned int)chunk);
                     if (chunk) {
-                        printf("wegr\n\n\n");
                         short blockpos[3] {CHUNK_SIZE-1,y,z};
                         block = chunk->get_block(blockpos);
                     }
