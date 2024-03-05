@@ -3,8 +3,8 @@
 
 #include "world_gen.hpp"
 #include "noise.hpp"
-#include "../chunk.hpp"
-#include "../blocks.hpp"
+#include "../../chunk.hpp"
+#include "../../blocks.hpp"
 
 
 void Generator::generateChunk(Chunk* chunk) {
@@ -32,9 +32,9 @@ void Generator::generateChunk(Chunk* chunk) {
 
     for (int x = 0; x < CHUNK_SIZE; x++) {
         for (int z = 0; z < CHUNK_SIZE; z++) {
-            double input1 = (chunk->pos[0]*CHUNK_SIZE+x)*0.03;
-            double input2 = (chunk->pos[1]*CHUNK_SIZE+z)*0.03;
-            int y =  (int)round((genNoise(input1,input2))+ 4);
+            double input1 = (chunk->pos[0]*CHUNK_SIZE+x);
+            double input2 = (chunk->pos[1]*CHUNK_SIZE+z);
+            int y =  (int)round((genNoise(input1,input2)) + 4);
 
             //printf(",  %d,  ",y);
 
