@@ -4,8 +4,9 @@
 
 void* WorldLoader::thread(void* data) {
     WorldLoader* parent = (WorldLoader*)data;
+    (void)parent;
 
-
+    return nullptr;
 }
 
 

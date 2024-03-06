@@ -22,10 +22,11 @@ inline double ridge(double x, double y) {
 
 
 double genNoise(double x, double y) {
-    return abs((
-            ((o1.eval(x*0.00025,y*0.00025) + 1) * 150) +
-            ((o2.eval(x*0.005,y*0.005) + 1) * 50) +
-            ((o3.eval(x*0.03,y*0.03) + 1) * 20) + 
-            ((o4.eval(x*0.1,y*0.1) + 1) * 3)
-            ));
+    return abs(1/(1+exp((-o3.eval(x*0.03,y*0.03))*10))*30);
+    // return abs((
+    //         ((o1.eval(x*0.00025,y*0.00025) + 1) * 150) +
+    //         ((o2.eval(x*0.005,y*0.005) + 1) * 50) +
+    //         ((o3.eval(x*0.03,y*0.03) + 1) * 20) + 
+    //         ((o4.eval(x*0.1,y*0.1) + 1) * 3)
+    //         ));
 }
