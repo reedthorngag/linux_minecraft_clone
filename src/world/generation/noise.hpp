@@ -16,26 +16,39 @@ OpenSimplexNoise::Noise o5(1000001);
 // double noise2D = db::perlin(0, 0);
 // double noise3D = db::perlin(0, 0, 0);
 
-// period paramater is named completely inaccurately, smaller numbers produce a larger period
-inline double genWaveForm(double x, double y, double period, double scale) {
-    return (o1.eval(x*period,y*period)+1) * scale;
+
+inline double genWaveForm(double x, double y, double frequency, double scale) {
+    return (o1.eval(x*frequency,y*frequency)+1) * scale;
 }
 
-inline double sigmoid(double x, double y, double period, double scale, double dropOffSteepness) {
-    return abs(1/(1+exp((-o1.eval(x*period,y*period))*dropOffSteepness))*scale);
+inline double sigmoid(double in, double scale, double dropOffSteepness) {
+    return abs(1/(1+exp((-(in*in*in))*dropOffSteepness))*scale);
 }
 
-inline double ridge(double x, double y) {
-    return sigmoid(x,y,0.005,30,40);
+inline double sigmoidWave(double x, double y, double frequency, double scale, double dropOffSteepness) {
+    return sigmoid(o1.eval(x*frequency,y*frequency),scale,dropOffSteepness);
+}
+
+inline double ridge(double x, double y, double frequency, double ) {
+    return 1-abs(sigmoidWave(x,y,frequency,2,5)-1);
+}
+
+inline double valley(double x, double y, double frequency, double width) {
+    (void)width;
+    //return sigmoidWave(x,y,frequency,2,10);
+    //return sigmoid(o1.eval(x*frequency,y*frequency)+0.3,2,20);
+    return abs(
+        sigmoid(o1.eval(x*frequency,y*frequency),2,200)
+        -1);
+}
+
+
+// TODO: make this cos I think it would be cool
+inline double ridgeWithValleysOffIt(double x, double y) {
+    return 1;
 }
 
 
 double genNoise(double x, double y) {
-    return sigmoid(x,y,0.03,30,20);
-    // return abs((
-    //         ((o1.eval(x*0.00025,y*0.00025) + 1) * 150) +
-    //         ((o2.eval(x*0.005,y*0.005) + 1) * 50) +
-    //         ((o3.eval(x*0.03,y*0.03) + 1) * 20) + 
-    //         ((o4.eval(x*0.1,y*0.1) + 1) * 3)
-    //         ));
+    return 50+valley(x,y,0.01,10)*20;
 }

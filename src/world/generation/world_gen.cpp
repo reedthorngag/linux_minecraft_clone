@@ -14,7 +14,7 @@ void Generator::generateChunk(Chunk* chunk) {
 
     // for (int x=0;x<size;x++) {
     //     for (int y=0;y<size;y++) {
-    //         array[x*size+y] = noise.eval(x,y);
+    //         array[x*size+y] = sigmoid(x,y,0.02,1,10);
     //     }
     // }
 
@@ -27,7 +27,6 @@ void Generator::generateChunk(Chunk* chunk) {
     // }
 
     // printf("\nmin: %lf, max: %lf \n",min,max);
-    // printf("min: %lf, max: %lf \n",round((min+1)*8),round((max+1)*8));
     // exit(1);
 
     for (int x = 0; x < CHUNK_SIZE; x++) {
