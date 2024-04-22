@@ -16,13 +16,22 @@ OpenSimplexNoise::Noise o5(1000001);
 // double noise2D = db::perlin(0, 0);
 // double noise3D = db::perlin(0, 0, 0);
 
+// period paramater is named completely inaccurately, smaller numbers produce a larger period
+inline double genWaveForm(double x, double y, double period, double scale) {
+    return (o1.eval(x*period,y*period)+1) * scale;
+}
+
+inline double sigmoid(double x, double y, double period, double scale, double dropOffSteepness) {
+    return abs(1/(1+exp((-o1.eval(x*period,y*period))*dropOffSteepness))*scale);
+}
+
 inline double ridge(double x, double y) {
-    return 1/(1+exp((-o3.eval(x*0.01,y*0.01)-0.2)*10));
+    return sigmoid(x,y,0.005,30,40);
 }
 
 
 double genNoise(double x, double y) {
-    return abs(1/(1+exp((-o3.eval(x*0.03,y*0.03))*10))*30);
+    return sigmoid(x,y,0.03,30,20);
     // return abs((
     //         ((o1.eval(x*0.00025,y*0.00025) + 1) * 150) +
     //         ((o2.eval(x*0.005,y*0.005) + 1) * 50) +

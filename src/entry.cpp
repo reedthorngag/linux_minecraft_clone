@@ -55,7 +55,7 @@ unsigned int VAO;
 unsigned int EBO;
 
 int imgWidth, imgHeight, nrChannels;
-unsigned char *imgData = stbi_load("textures/block_textures.png", &imgWidth, &imgHeight, &nrChannels, 0);
+unsigned char *imgData = stbi_load("textures/blocks.png", &imgWidth, &imgHeight, &nrChannels, 0);
 
 
 void DebugCallbackARB(GLenum source,
@@ -190,8 +190,8 @@ int main() {
         if (glGetError()!=GL_NO_ERROR) printf("fuck\n");
     } else printf("thingy not supported!\n");
     
-    GLuint vertexShader = loadShader("vertex_shader.glsl",GL_VERTEX_SHADER);
-    GLuint fragShader = loadShader("frag_shader.glsl",GL_FRAGMENT_SHADER);
+    GLuint vertexShader = loadShader("src/shaders/vertex_shader.glsl",GL_VERTEX_SHADER);
+    GLuint fragShader = loadShader("src/shaders/frag_shader.glsl",GL_FRAGMENT_SHADER);
 
     program = glCreateProgram();
 
