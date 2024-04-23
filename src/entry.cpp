@@ -20,6 +20,7 @@
 #include "world/world.hpp"
 #include "world/generation/world_gen.hpp"
 #include "world/world_loader.hpp"
+#include <unistd.h>
 
 extern ChunkMap chunks;
 
@@ -195,7 +196,7 @@ int main() {
 
     program = glCreateProgram();
 
-    glAttachShader(program,vertexShader);
+    glAttachShader(program, vertexShader);
     glAttachShader(program, fragShader);
 
     glLinkProgram(program);
@@ -256,7 +257,7 @@ int main() {
 
     camera = new Camera(program);
 
-
+    WorldLoader worldLoader;
     Generator gen;
     double count = 0;
     double total = RENDER_DISTANCE*2;
@@ -282,8 +283,8 @@ int main() {
     for (int x=-(RENDER_DISTANCE/2); x<(RENDER_DISTANCE/2); x++) {
         for (int y=-(RENDER_DISTANCE/2);y<(RENDER_DISTANCE/2);y++) {
             int pos[2]{x,y};
-            chunks.getChunk(pos)->gen_mesh();
-            printf("\rMeshing chunks... %f",(count++/total));
+            worldLoader.pushChunk(chunks.getChunk(pos));
+            //printf("\rMeshing chunks... %f",(count++/total));
         }
     }
 
@@ -320,7 +321,7 @@ int main() {
                             for (int x=-(RENDER_DISTANCE/2); x<(RENDER_DISTANCE/2); x++) {
                                 for (int y=-(RENDER_DISTANCE/2);y<(RENDER_DISTANCE/2);y++) {
                                     int pos[2]{x,y};
-                                    chunks.getChunk(pos)->gen_mesh();
+                                    worldLoader.pushChunk(chunks.getChunk(pos));
                                 }
                             }
                             std::chrono::time_point end1 = Clock::now();

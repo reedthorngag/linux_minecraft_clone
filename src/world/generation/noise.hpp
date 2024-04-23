@@ -22,7 +22,7 @@ inline double genWaveForm(double x, double y, double frequency, double scale) {
 }
 
 inline double sigmoid(double in, double scale, double dropOffSteepness) {
-    return abs(1/(1+exp((-(in*in*in))*dropOffSteepness))*scale);
+    return abs(1/(1+exp(-in*dropOffSteepness))*scale);
 }
 
 inline double sigmoidWave(double x, double y, double frequency, double scale, double dropOffSteepness) {
@@ -34,12 +34,8 @@ inline double ridge(double x, double y, double frequency, double ) {
 }
 
 inline double valley(double x, double y, double frequency, double width) {
-    (void)width;
-    //return sigmoidWave(x,y,frequency,2,10);
-    //return sigmoid(o1.eval(x*frequency,y*frequency)+0.3,2,20);
-    return abs(
-        sigmoid(o1.eval(x*frequency,y*frequency),2,200)
-        -1);
+    double z = o1.eval(x*frequency,y*frequency);
+    return abs(sigmoid(z*z*z,2,200)-1);
 }
 
 
