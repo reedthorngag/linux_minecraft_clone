@@ -25,6 +25,10 @@ class Chunk {
         GLuint VBO;
         GLuint EBO;
 
+        float* vertices;
+        unsigned int* indices;
+        unsigned int _count;
+
         unsigned int count = 0;
 
         void add_face(std::vector<face*>* _faces,short pos[3],faces _face);
@@ -40,6 +44,7 @@ class Chunk {
 
         void render();
         void gen_mesh();
+        void genBuffers();
         short get_block(short pos[3]);
 
         Chunk(unsigned int program, int pos[2]);

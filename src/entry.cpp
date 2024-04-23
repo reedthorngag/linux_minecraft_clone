@@ -346,6 +346,13 @@ int main() {
             tick();
         
         std::chrono::time_point start = Clock::now();
+        {
+            std::unique_lock<std::mutex> lock(worldLoader.genBufferQueue.mutex);
+            while (!worldLoader.genBufferQueue.queue.empty()) {
+                worldLoader.genBufferQueue.queue.front()->genBuffers();
+                worldLoader.genBufferQueue.queue.pop();
+            }
+        }
         render();
         std::chrono::time_point end = Clock::now();
         long long int ms = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();

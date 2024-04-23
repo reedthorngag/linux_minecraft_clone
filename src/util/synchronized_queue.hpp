@@ -9,13 +9,12 @@
 
 template <typename T>
 class SynchronizedQueue {
-    private:
-        std::queue<T> queue;
-        std::mutex mutex;
-        std::condition_variable condition;
-
     public:
-        void push(T chunk) {
+        std::queue<T> queue;
+        std::condition_variable condition;
+        std::mutex mutex;
+
+        void push(T item) {
             std::unique_lock<std::mutex> lock(this->mutex);
 
             this->queue.push(item);
@@ -30,7 +29,7 @@ class SynchronizedQueue {
             T item = queue.front();
             queue.pop();
 
-            return T;
+            return item;
         }
 };
 

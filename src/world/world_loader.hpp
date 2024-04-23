@@ -1,6 +1,6 @@
 #include <pthread.h>
 
-#include "../util/world_gen_queue.hpp"
+#include "../util/synchronized_queue.hpp"
 
 #ifndef _WORLD_LOADER
 #define _WORLD_LOADER
@@ -13,11 +13,11 @@ class WorldLoader {
         bool die = false;
         pthread_t thread_pool[NUM_THREADS] { 0 };
         
-
         static void* thread(void* data);
 
     public:
-        WorldGenQueue queue;
+        SynchronizedQueue<Chunk*> meshingQueue;
+        SynchronizedQueue<Chunk*> genBufferQueue;
         void pushChunk(Chunk* chunk);
         WorldLoader();
         ~WorldLoader();

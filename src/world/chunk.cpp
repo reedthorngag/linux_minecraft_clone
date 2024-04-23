@@ -150,9 +150,9 @@ void Chunk::gen_mesh() {
         }
     }
 
-    int count = faces.size();
-    float* vertices = new float[count*5*4];
-    unsigned int* indices = new unsigned int[count*6];
+    unsigned int count = faces.size();
+    this->vertices = new float[count*5*4];
+    this->indices = new unsigned int[count*6];
 
     float* _vertices = vertices;
     unsigned int* _indices = indices;
@@ -182,19 +182,24 @@ void Chunk::gen_mesh() {
         n++;
     }
 
-    this->count = count;
+    this->_count = count;
+    
+}
+
+void Chunk::genBuffers() {
+    this->count = this->_count;
 
     glUseProgram(this->program);
 
     glBindVertexArray(this->VAO);
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-	glBufferData(GL_ARRAY_BUFFER, count * 5 * 4 * sizeof(float), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, count * 5 * 4 * sizeof(float), this->vertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int) * 6, indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int) * 6, this->indices, GL_STATIC_DRAW);
 
-    delete vertices;
-    delete indices;
+    delete this->vertices;
+    delete this->indices;
 }
 
 Chunk::Chunk(unsigned int program, int pos[2]) {
