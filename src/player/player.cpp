@@ -1,8 +1,11 @@
 #include "player.hpp"
+#include <stdio.h>
 
 
 void Player::move(long long int ms) {
     glm::vec3 move_speed = glm::vec3(speed,speed,speed) * glm::vec3((this->input->keys[50]?speed_scale:1) * ms);
+    //if (!move_speed[0]) printf("wefrgt %lld\n", ms);
+    printf("%lld   %f\n",ms,move_speed[0]);
 
     if (this->input->keys[25]) // w
         this->camera->move(this->camera->direction * move_speed);

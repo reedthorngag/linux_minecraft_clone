@@ -1,6 +1,6 @@
 #!/bin/bash
 
-g++ -Wall -g -W -Werror -Wno-unused-parameter \
+g++ -Wall -g -W -Werror -Wno-unused-parameter -Wno-unused-variable \
     -I ./src/include \
     src/*.cpp \
     src/**/*.cpp \

@@ -29,10 +29,9 @@ void* WorldLoader::genThread(void* data) {
         if (parent->die || !chunk) return nullptr;
         parent->worldGen.generateChunk(chunk);
         printf("here?\n");
-        parent->meshingQueue.push(chunk);
-        /*chunk->gen_mesh();
+        chunk->gen_mesh();
         printf("here\n");
-        parent->genBufferQueue.push(chunk);*/
+        parent->genBufferQueue.push(chunk);
     }
 
     return nullptr;

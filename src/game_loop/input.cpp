@@ -6,5 +6,5 @@ void Input::press(unsigned int key) {
 }
 
 void Input::release(unsigned int key) {
-    keys[key] = true;
+    keys[key] = false;
 }
