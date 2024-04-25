@@ -12,14 +12,14 @@
 #include <chrono>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "./include/stb_image.h"
+#include <stb_image.h>
 
-#include "shader.hpp"
-#include "world/chunk.hpp"
-#include "camera.hpp"
-#include "world/world.hpp"
-#include "world/generation/world_gen.hpp"
-#include "world/world_loader.hpp"
+#include "../shader.hpp"
+#include "../world/chunk.hpp"
+#include "../player/camera.hpp"
+#include "../world/world.hpp"
+#include "../world/generation/world_gen.hpp"
+#include "../world/world_loader.hpp"
 #include <unistd.h>
 
 extern ChunkMap chunks;
@@ -81,11 +81,8 @@ float speed_scale = 5;
 void tick() {
     lastTick = Clock::now();
 
-    // doesnt seem to make a noticible difference the order rotations and translations are applied
-
     if (keys[25]) // w
-        camera->move(camera->direction*(glm::vec3(speed,speed,speed)*glm::vec3(keys[50]?speed_scale:1)));
-        //camera->move(glm::vec3(0,0,0.1));
+        camera->move(camera->direction * (glm::vec3(speed,speed,speed) * glm::vec3(keys[50]?speed_scale:1)));
     
     if (keys[38]) // a
         camera->move(glm::cross(glm::vec3(0,1,0),camera->direction*(glm::vec3(speed,speed,speed)*glm::vec3(keys[50]?speed_scale:1))));

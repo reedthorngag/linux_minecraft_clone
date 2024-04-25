@@ -18,14 +18,17 @@ Camera::~Camera() {
 
 void Camera::rotateX(int degrees) {
     this->updated = true;
-
-    this->direction = glm::rotateY(this->direction,glm::radians((float)degrees));
+    this->rotationY += degrees;  // because its around, not along, that axis
+    this->direction = glm::rotateX(glm::vec3(0,0,1),glm::radians((float)this->rotationX));
+    this->direction = glm::rotateY(this->direction,glm::radians((float)this->rotationY));
 }
 
 void Camera::rotateY(int degrees) {
     this->updated = true;
-    
-    this->direction = glm::rotateX(this->direction,glm::radians((float)degrees));
+    if (this->rotationX+degrees < -90 || this->rotationX+degrees > 90) return;
+    this->rotationX += degrees; // because its around, not along, that axis
+    this->direction = glm::rotateX(glm::vec3(0,0,1),glm::radians((float)this->rotationX));
+    this->direction = glm::rotateY(this->direction,glm::radians((float)this->rotationY));
 }
 
 

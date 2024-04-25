@@ -5,7 +5,7 @@
 #ifndef _WORLD_LOADER
 #define _WORLD_LOADER
 
-const int NUM_THREADS = 1;
+const int NUM_THREADS = 8;
 
 class WorldLoader {
 
