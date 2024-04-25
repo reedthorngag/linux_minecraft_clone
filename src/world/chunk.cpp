@@ -1,15 +1,4 @@
-#include <GL/glew.h>
-#include <stdio.h>
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-#include <vector>
-#include <string>
-
 #include "chunk.hpp"
-#include "blocks.hpp"
-#include "world.hpp"
-
-extern World chunks;
 
 void Chunk::render() {
 
@@ -65,7 +54,7 @@ void Chunk::gen_mesh() {
                 if (pos[0]-1 < 0) {
                     int chunkpos[2]{this->pos[0]-1,this->pos[1]};
 
-                    Chunk* chunk = chunks.getChunk(chunkpos);
+                    Chunk* chunk = this->world->getChunk(chunkpos);
                     if (chunk) {
                         short blockpos[3] {CHUNK_SIZE-1,y,z};
                         block = chunk->get_block(blockpos);
@@ -82,7 +71,7 @@ void Chunk::gen_mesh() {
                 if (pos[0]+1 == CHUNK_SIZE) {
                     int chunkpos[2]{this->pos[0]+1,this->pos[1]};
 
-                    Chunk* chunk = chunks.getChunk(chunkpos);
+                    Chunk* chunk = this->world->getChunk(chunkpos);
                     if (chunk) {
                         short blockpos[3] {0,y,z};
                         block = chunk->get_block(blockpos);
@@ -99,7 +88,7 @@ void Chunk::gen_mesh() {
                 if (pos[2]-1 < 0) {
                     int chunkpos[2]{this->pos[0],this->pos[1]-1};
 
-                    Chunk* chunk = chunks.getChunk(chunkpos);
+                    Chunk* chunk = this->world->getChunk(chunkpos);
                     if (chunk) {
                         short blockpos[3] {x,y,CHUNK_SIZE-1};
                         block = chunk->get_block(blockpos);
@@ -116,7 +105,7 @@ void Chunk::gen_mesh() {
                 if (pos[2]+1 == CHUNK_SIZE) {
                     int chunkpos[2]{this->pos[0],this->pos[1]+1};
 
-                    Chunk* chunk = chunks.getChunk(chunkpos);
+                    Chunk* chunk = this->world->getChunk(chunkpos);
                     if (chunk) {
                         short blockpos[3] {x,y,0};
                         block = chunk->get_block(blockpos);
@@ -202,8 +191,9 @@ void Chunk::genBuffers() {
     delete this->indices;
 }
 
-Chunk::Chunk(unsigned int program, int pos[2]) {
+Chunk::Chunk(unsigned int program, World* world, int pos[2]) {
     this->program = program;
+    this->world = world;
     this->pos = pos;
 
     glUseProgram(this->program);

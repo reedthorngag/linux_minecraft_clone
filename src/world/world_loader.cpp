@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "world_loader.hpp"
+#include "chunk.hpp"
 
 void* WorldLoader::thread(void* data) {
     WorldLoader* parent = (WorldLoader*)data;

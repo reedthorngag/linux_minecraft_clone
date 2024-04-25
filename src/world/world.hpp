@@ -2,21 +2,23 @@
 #include <unordered_map>
 #include <string>
 
-#include "chunk.hpp"
+#include "world_loader.hpp"
+#include "../globals.hpp"
 
 #ifndef _WORLD
 #define _WORLD
 
-const int RENDER_DISTANCE = 24;
+struct Chunk;
 
 class World {
     public:
         std::unordered_map<std::string,Chunk*> _chunks;
 
+        WorldLoader worldLoader;
+
         void setChunk(int pos[2], Chunk* chunk);
         Chunk* getChunk(int pos[2]);
-};
 
-extern World chunks;
+};
 
 #endif

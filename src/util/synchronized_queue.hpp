@@ -2,10 +2,8 @@
 #include <queue>
 #include <condition_variable>
 
-#include "../world/chunk.hpp"
-
-#ifndef WORLD_GEN_QUEUE
-#define WORL_GEN_QUEUE
+#ifndef _WORLD_GEN_QUEUE
+#define _WORLD_GEN_QUEUE
 
 template <typename T>
 class SynchronizedQueue {

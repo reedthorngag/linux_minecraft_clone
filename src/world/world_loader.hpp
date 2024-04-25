@@ -7,6 +7,8 @@
 
 const int NUM_THREADS = 8;
 
+struct Chunk;
+
 class WorldLoader {
 
     private:

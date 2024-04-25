@@ -7,9 +7,11 @@
 
 #include "camera.hpp"
 
-Camera::Camera(unsigned int program) {
+Camera::Camera(GLuint program,glm::vec3 startPos) {
     this->updated = true;
-    this->updateUniforms(program);
+    this->pos = startPos;
+    this->program = program;
+    this->updateUniforms();
 }
 
 Camera::~Camera() {
@@ -44,7 +46,7 @@ void Camera::updateFOV(int FOV) {
     // TODO: work out how to change the FOV
 }
 
-void Camera::updateUniforms(unsigned int program) {
+void Camera::updateUniforms() {
     if (!this->updated) return;
     
     glm::vec3 origin = this->direction;
@@ -56,11 +58,11 @@ void Camera::updateUniforms(unsigned int program) {
         glm::vec3(0,1,0)
     );
 
-	unsigned int lookAt = glGetUniformLocation(program,"view");
+	unsigned int lookAt = glGetUniformLocation(this->program,"view");
 	glUniformMatrix4fv(lookAt, 1, GL_FALSE, glm::value_ptr(view));
 	
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 500.0f);
-	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(glGetUniformLocation(this->program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 }
 

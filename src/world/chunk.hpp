@@ -1,8 +1,12 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
+#include <glm/ext.hpp>
 #include <vector>
+#include <string>
+#include <stdio.h>
 
 #include "blocks.hpp"
+#include "world.hpp"
 
 #ifndef _Chunk
 #define _Chunk
@@ -21,6 +25,9 @@ struct face {
 class Chunk {
 
     private:
+        GLuint program;
+        World* world;
+
         GLuint VAO;
         GLuint VBO;
         GLuint EBO;
@@ -37,7 +44,6 @@ class Chunk {
         short* layers[CHUNK_HEIGHT] = {0};
         short solid_layers[CHUNK_HEIGHT] = {0};
 
-        GLuint program;
         int* pos;
 
         short heightmap[CHUNK_SIZE*CHUNK_SIZE] = { 0 };
@@ -47,7 +53,7 @@ class Chunk {
         void genBuffers();
         short get_block(short pos[3]);
 
-        Chunk(unsigned int program, int pos[2]);
+        Chunk(GLuint program, World* world, int pos[2]);
         ~Chunk();
 };
 
