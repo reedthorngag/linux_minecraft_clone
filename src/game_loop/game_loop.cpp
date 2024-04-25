@@ -64,7 +64,6 @@ void GameLoop::start() {
         {
             std::unique_lock<std::mutex> lock(this->world->worldLoader->genBufferQueue.mutex);
             while (!this->world->worldLoader->genBufferQueue.queue.empty()) {
-                printf("genning buffer\n");
                 this->world->worldLoader->genBufferQueue.queue.front()->genBuffers(this->world);
                 this->world->worldLoader->genBufferQueue.queue.pop();
             }
@@ -76,7 +75,7 @@ void GameLoop::start() {
 
         end = Clock::now();
         long long int ms = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
-        //if (ms) printf("\r ms: %d, fps: %d      \r",(int)ms, (int)(1000/ms));
+        if (ms) printf("\r ms: %d, fps: %d      \r",(int)ms, (int)(1000/ms));
     }
 }
 
@@ -106,36 +105,13 @@ void GameLoop::generateChunks() {
     int posX = ((long)this->activeCamera->pos[0])/CHUNK_SIZE;
     int posY = ((long)this->activeCamera->pos[2])/CHUNK_SIZE;
 
-    for (short i=0;i>-2;i--) {
-        for (int n=0;n<RENDER_DISTANCE; n++) {
-            int pos[2]{posX,posY+(n*i)};
-
+    for (int x=posX-RENDER_DISTANCE;x<posX+RENDER_DISTANCE;x++) {
+        for (int y=posY-RENDER_DISTANCE;y<posY+RENDER_DISTANCE;y++) {
+            int pos[2]{x,y};
             if (!this->world->getChunk(pos)) {
-                for (int x=posX-RENDER_DISTANCE;x<=posX+RENDER_DISTANCE;x++) {
-                    pos[0] = x;
-                    if (!this->world->getChunk(pos)) {
-                        int* p = new int[2]{pos[0],pos[1]};
-                        this->world->setChunk(p,(Chunk*)-1L);
-                        this->world->worldLoader->genChunk(p);
-                    }
-                }
-            }
-        }
-    }
-
-    for (short i=0;i>-2;i--) {
-        for (int n=0;n<RENDER_DISTANCE; n++) {
-            int pos[2]{posX+(n*i),posY};
-
-            if (!this->world->getChunk(pos)) {
-                for (int y=posY-RENDER_DISTANCE;y<=posY+RENDER_DISTANCE;y++) {
-                    pos[1] = y;
-                    if (!this->world->getChunk(pos)) {
-                        int* p = new int[2]{pos[0],pos[1]};
-                        this->world->setChunk(p,(Chunk*)-1L);
-                        this->world->worldLoader->genChunk(p);
-                    }
-                }
+                int* p = new int[2]{pos[0],pos[1]};
+                this->world->setChunk(p,(Chunk*)-1L);
+                this->world->worldLoader->genChunk(p);
             }
         }
     }

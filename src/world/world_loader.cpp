@@ -10,11 +10,10 @@ void* WorldLoader::meshingThread(void* data) {
 
     while (!parent->die) {
         Chunk* chunk = parent->meshingQueue.pop();
-        printf("meshing::got chunk!\n");
+        //printf("meshing::got chunk!\n");
         if (parent->die || !chunk) return nullptr;
         chunk->gen_mesh();
         parent->genBufferQueue.push(chunk);
-        printf("done meshing!\n");
     }
 
     return nullptr;
@@ -25,12 +24,9 @@ void* WorldLoader::genThread(void* data) {
 
     while (!parent->die) {
         Chunk* chunk = parent->genQueue.pop();
-        printf("gen::got chunk!\n");
         if (parent->die || !chunk) return nullptr;
         parent->worldGen.generateChunk(chunk);
-        printf("here?\n");
         chunk->gen_mesh();
-        printf("here\n");
         parent->genBufferQueue.push(chunk);
     }
 

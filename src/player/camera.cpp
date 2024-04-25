@@ -27,7 +27,7 @@ void Camera::rotateX(int degrees) {
 
 void Camera::rotateY(int degrees) {
     this->updated = true;
-    if (this->rotationX+degrees < -90 || this->rotationX+degrees > 90) return;
+    if (this->rotationX+degrees <= -90 || this->rotationX+degrees >= 90) return;
     this->rotationX += degrees; // because its around, not along, that axis
     this->direction = glm::rotateX(glm::vec3(0,0,1),glm::radians((float)this->rotationX));
     this->direction = glm::rotateY(this->direction,glm::radians((float)this->rotationY));
