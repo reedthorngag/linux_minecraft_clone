@@ -1,4 +1,7 @@
 
+#ifndef _INPUT
+#define _INPUT
+
 class Input {
     private:
     public:
@@ -8,4 +11,4 @@ class Input {
         void release(unsigned int key);
 };
 
-
+#endif

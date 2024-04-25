@@ -7,7 +7,7 @@
 #include "../blocks.hpp"
 
 
-void Generator::generateChunk(Chunk* chunk) {
+void WorldGenerator::generateChunk(Chunk* chunk) {
 
     // const int size = 1000;
     // double array[size*size];
@@ -35,8 +35,6 @@ void Generator::generateChunk(Chunk* chunk) {
             double input2 = (chunk->pos[1]*CHUNK_SIZE+z);
             int y =  (int)round((genNoise(input1,input2)) + 4);
 
-            //printf(",  %d,  ",y);
-
             int pos = z*CHUNK_SIZE+x;
             chunk->heightmap[pos] = y;
 
@@ -60,10 +58,10 @@ void Generator::generateChunk(Chunk* chunk) {
     }
 }
 
-Generator::Generator() {
+WorldGenerator::WorldGenerator() {
 }
 
-Generator::~Generator() {
+WorldGenerator::~WorldGenerator() {
 
 }
 

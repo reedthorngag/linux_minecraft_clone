@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#g++ -Wall -W -Werror *.cpp -o output -lGLU -lGL -lX11 || exit 1
-
 g++ -Wall -g -W -Werror -Wno-unused-parameter \
     -I ./src/include \
     src/*.cpp \

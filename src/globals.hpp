@@ -11,7 +11,7 @@ const int halfWidth = width/2;
 const int halfHeight = height/2;
 
 typedef std::chrono::high_resolution_clock Clock;
-const int tickTime = 10;
+const int tickTime = 50;
 
 const float speed = 0.1;
 const float speed_scale = 5;

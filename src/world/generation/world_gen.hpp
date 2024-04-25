@@ -1,15 +1,15 @@
-#include "../chunk.hpp"
-
 #ifndef _WorldGen
 #define _WorldGen
 
-class Generator {
+struct Chunk;
+
+class WorldGenerator {
 
     public:
         void generateChunk(Chunk* chunk);
 
-        Generator();
-        ~Generator();
+        WorldGenerator();
+        ~WorldGenerator();
 };
 
 #endif

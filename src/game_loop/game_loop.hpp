@@ -23,9 +23,9 @@ class GameLoop {
         bool _exit = false;
         bool paused = false;
 
-        Clock::time_point lastTick;
+        bool playerActive = true;
 
-        GLuint program;
+        Clock::time_point lastTick;
 
         World* world;
         Menu menu;
@@ -33,9 +33,11 @@ class GameLoop {
         Player* player;
         Camera* freeCam;
 
-        Camera* activeCameraController;
+        Camera* activeCamera;
 
     public:
+        GLuint program;
+
         GameLoop();
 
         void start();
@@ -44,7 +46,7 @@ class GameLoop {
         void kill();
         void showMenu();
 
-        void render();
+        void render(long long int ms);
         void tick();
         void generateChunks();
 };

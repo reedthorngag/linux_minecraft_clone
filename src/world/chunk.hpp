@@ -41,6 +41,8 @@ class Chunk {
         void add_face(std::vector<face*>* _faces,short pos[3],faces _face);
 
     public:
+        bool ready = false;
+
         short* layers[CHUNK_HEIGHT] = {0};
         short solid_layers[CHUNK_HEIGHT] = {0};
 

@@ -4,11 +4,16 @@
 
 GameLoop::GameLoop() {
     this->freeCam = new Camera(this->program,glm::vec3(0,100,0));
+    this->world = new World(this);
+    this->player = new Player(this->program,&this->input);
 }
 
 void GameLoop::start() {
-    this->activeCameraController = this->player->camera;
+    this->activeCamera = this->player->camera;
     this->running = true;
+
+    std::chrono::time_point end = Clock::now();
+
     while(running && !paused) {
         if (XCheckWindowEvent(dpy,win,mask,&xev)) {
             switch (xev.type) {
@@ -28,7 +33,7 @@ void GameLoop::start() {
                             for (int x=-(RENDER_DISTANCE/2); x<(RENDER_DISTANCE/2); x++) {
                                 for (int y=-(RENDER_DISTANCE/2);y<(RENDER_DISTANCE/2);y++) {
                                     int pos[2]{x,y};
-                                    this->world->worldLoader.pushChunk(this->world->getChunk(pos));
+                                    this->world->worldLoader->meshChunk(this->world->getChunk(pos));
                                 }
                             }
                             std::chrono::time_point end1 = Clock::now();
@@ -53,31 +58,40 @@ void GameLoop::start() {
             tick();
         
         std::chrono::time_point start = Clock::now();
+
         {
-            std::unique_lock<std::mutex> lock(this->world->worldLoader.genBufferQueue.mutex);
-            while (!this->world->worldLoader.genBufferQueue.queue.empty()) {
-                this->world->worldLoader.genBufferQueue.queue.front()->genBuffers();
-                this->world->worldLoader.genBufferQueue.queue.pop();
+            std::unique_lock<std::mutex> lock(this->world->worldLoader->genBufferQueue.mutex);
+            while (!this->world->worldLoader->genBufferQueue.queue.empty()) {
+                this->world->worldLoader->genBufferQueue.queue.front()->genBuffers();
+                this->world->worldLoader->genBufferQueue.queue.pop();
             }
         }
-        render();
-        std::chrono::time_point end = Clock::now();
+
+        render(std::chrono::duration_cast<std::chrono::milliseconds>(start-end).count());
+
+        end = Clock::now();
         long long int ms = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
         if (ms)
             printf("\r ms: %d, fps: %d      \r",(int)ms, (int)(1000/ms));
     }
 }
 
-void GameLoop::render() {
+void GameLoop::render(long long int ms) {
+    if (this->playerActive) this->player->move(ms);
+
     glClearColor(0.0, 0.65, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    this->activeCameraController->updateUniforms();
+    this->activeCamera->updateUniforms();
 
-    for (int x=-(RENDER_DISTANCE/2); x<(RENDER_DISTANCE/2); x++) {
-        for (int y=-(RENDER_DISTANCE/2);y<(RENDER_DISTANCE/2);y++) {
+    int posX = this->activeCamera->pos[0]/CHUNK_SIZE;
+    int posY = this->activeCamera->pos[2]/CHUNK_SIZE;
+
+    for (int x=posX-(RENDER_DISTANCE/2); x<(posX+RENDER_DISTANCE/2); x++) {
+        for (int y=posY-(RENDER_DISTANCE/2);y<(posY+RENDER_DISTANCE/2);y++) {
             int pos[2]{x,y};
-            this->world->getChunk(pos)->render();
+            Chunk* chunk = this->world->getChunk(pos);
+            if (chunk) chunk->render();
         }
     }
 
@@ -91,30 +105,9 @@ void GameLoop::generateChunks() {
 void GameLoop::tick() {
     this->lastTick = Clock::now();
 
-    if (this->input.keys[25]) // w
-        this->activeCameraController->move(this->activeCameraController->direction * (glm::vec3(speed,speed,speed) * glm::vec3(this->input.keys[50]?speed_scale:1)));
-    
-    if (this->input.keys[38]) // a
-        this->activeCameraController->move(glm::cross(glm::vec3(0,1,0),this->activeCameraController->direction*(glm::vec3(speed,speed,speed)*glm::vec3(this->input.keys[50]?speed_scale:1))));
+    if (this->playerActive) this->player->tick();
 
-    if (this->input.keys[39]) // s
-        this->activeCameraController->move(-this->activeCameraController->direction*(glm::vec3(speed,speed,speed)*glm::vec3(this->input.keys[50]?speed_scale:1)));
-    
-    if (this->input.keys[40]) // d
-        this->activeCameraController->move(glm::cross(glm::vec3(0,1,0),-this->activeCameraController->direction*(glm::vec3(speed,speed,speed)*glm::vec3(this->input.keys[50]?speed_scale:1))));
-
-
-    if (this->input.keys[111]) // up
-        this->activeCameraController->rotateY(-1);
-    
-    if (this->input.keys[116]) // down
-        this->activeCameraController->rotateY(1);
-
-    if (this->input.keys[113]) // left
-        this->activeCameraController->rotateX(1);
-    
-    if (this->input.keys[114]) // right
-        this->activeCameraController->rotateX(-1);
+    this->generateChunks();
 }
 
 void GameLoop::pause() {

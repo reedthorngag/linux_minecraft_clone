@@ -187,6 +187,8 @@ void Chunk::genBuffers() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int) * 6, this->indices, GL_STATIC_DRAW);
 
+    this->ready = true;
+
     delete this->vertices;
     delete this->indices;
 }
