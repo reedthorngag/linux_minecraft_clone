@@ -10,7 +10,7 @@ int main() {
     createWindow();
     setupOpenGL();
 
-    GameLoop gameLoop;
+    GameLoop gameLoop(program);
     gameLoop.start();
 
 

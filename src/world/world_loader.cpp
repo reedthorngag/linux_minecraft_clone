@@ -14,6 +14,7 @@ void* WorldLoader::meshingThread(void* data) {
         if (parent->die || !chunk) return nullptr;
         chunk->gen_mesh();
         parent->genBufferQueue.push(chunk);
+        printf("done meshing!\n");
     }
 
     return nullptr;
@@ -27,9 +28,11 @@ void* WorldLoader::genThread(void* data) {
         printf("gen::got chunk!\n");
         if (parent->die || !chunk) return nullptr;
         parent->worldGen.generateChunk(chunk);
-        chunk->gen_mesh();
-        parent->world->setChunk(chunk->pos,chunk);
-        parent->genBufferQueue.push(chunk);
+        printf("here?\n");
+        parent->meshingQueue.push(chunk);
+        /*chunk->gen_mesh();
+        printf("here\n");
+        parent->genBufferQueue.push(chunk);*/
     }
 
     return nullptr;
@@ -42,7 +45,7 @@ void WorldLoader::meshChunk(Chunk* chunk) {
 void WorldLoader::genChunk(int pos[2]) {
 
     Chunk* chunk = new Chunk(this->world->gameLoop->program,this->world,pos);
-    this->world->setChunk(pos,nullptr);
+    this->world->setChunk(pos,(Chunk*)-1l);
 
     this->genQueue.push(chunk);
 }

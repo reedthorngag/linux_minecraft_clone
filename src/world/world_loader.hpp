@@ -23,12 +23,13 @@ class WorldLoader {
         SynchronizedQueue<Chunk*> meshingQueue;
 
         World* world;
-        WorldGenerator worldGen;
+        
         
         static void* meshingThread(void* data);
         static void* genThread(void* data);
 
     public:
+        WorldGenerator worldGen;
         SynchronizedQueue<Chunk*> genBufferQueue;
 
         void genChunk(int pos[2]);

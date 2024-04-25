@@ -7,12 +7,10 @@
 
 #include "blocks.hpp"
 #include "world.hpp"
+#include "../globals.hpp"
 
 #ifndef _Chunk
 #define _Chunk
-
-const int CHUNK_HEIGHT = 256;
-const int CHUNK_SIZE = 32;
 
 const int VERTEX_SIZE = sizeof(float)*(3+2);
 const int DATA_SIZE = VERTEX_SIZE*4;
@@ -52,7 +50,7 @@ class Chunk {
 
         void render();
         void gen_mesh();
-        void genBuffers();
+        void genBuffers(World* world);
         short get_block(short pos[3]);
 
         Chunk(GLuint program, World* world, int pos[2]);

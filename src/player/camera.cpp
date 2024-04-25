@@ -47,7 +47,7 @@ void Camera::updateFOV(int FOV) {
 }
 
 void Camera::updateUniforms() {
-    if (!this->updated) return;
+    //if (!this->updated) return;
     
     glm::vec3 origin = this->direction;
     origin += this->pos;

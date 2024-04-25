@@ -2,14 +2,16 @@
 
 #include "game_loop.hpp"
 
-GameLoop::GameLoop() {
+GameLoop::GameLoop(GLuint program) {
+    this->program = program;
     this->freeCam = new Camera(this->program,glm::vec3(0,100,0));
+    this->freeCam->direction = glm::vec3(1,0,0);
     this->world = new World(this);
     this->player = new Player(this->program,&this->input);
 }
 
 void GameLoop::start() {
-    this->activeCamera = this->player->camera;
+    this->activeCamera = this->freeCam;
     this->running = true;
 
     std::chrono::time_point end = Clock::now();
@@ -62,7 +64,8 @@ void GameLoop::start() {
         {
             std::unique_lock<std::mutex> lock(this->world->worldLoader->genBufferQueue.mutex);
             while (!this->world->worldLoader->genBufferQueue.queue.empty()) {
-                this->world->worldLoader->genBufferQueue.queue.front()->genBuffers();
+                printf("genning buffer\n");
+                this->world->worldLoader->genBufferQueue.queue.front()->genBuffers(this->world);
                 this->world->worldLoader->genBufferQueue.queue.pop();
             }
         }
@@ -84,14 +87,17 @@ void GameLoop::render(long long int ms) {
 
     this->activeCamera->updateUniforms();
 
-    int posX = this->activeCamera->pos[0]/CHUNK_SIZE;
-    int posY = this->activeCamera->pos[2]/CHUNK_SIZE;
+    int posX = ((long)this->activeCamera->pos[0])/CHUNK_SIZE;
+    int posY = ((long)this->activeCamera->pos[2])/CHUNK_SIZE;
 
-    for (int x=posX-(RENDER_DISTANCE/2); x<(posX+RENDER_DISTANCE/2); x++) {
-        for (int y=posY-(RENDER_DISTANCE/2);y<(posY+RENDER_DISTANCE/2);y++) {
+    for (int x=posX-RENDER_DISTANCE; x<=posX+RENDER_DISTANCE; x++) {
+        for (int y=posY-RENDER_DISTANCE;y<=posY+RENDER_DISTANCE;y++) {
             int pos[2]{x,y};
             Chunk* chunk = this->world->getChunk(pos);
-            if (chunk) chunk->render();
+            if (chunk && (long)chunk!=-1l) {
+                //printf("rendering chunk\n");
+                chunk->render();
+            }
         }
     }
 
@@ -99,7 +105,29 @@ void GameLoop::render(long long int ms) {
 }
 
 void GameLoop::generateChunks() {
-    
+    int posX = ((long)this->activeCamera->pos[0])/CHUNK_SIZE;
+    int posY = ((long)this->activeCamera->pos[2])/CHUNK_SIZE;
+
+    for (int i=0;i<RENDER_DISTANCE; i++) {
+        int pos[2]{posX,posY+i};
+
+        if (!this->world->getChunk(pos)) {
+            for (int x=posX-RENDER_DISTANCE;x<=posX+RENDER_DISTANCE;x++) {
+                pos[0] = x;
+                if (!this->world->getChunk(pos)) {
+                    int* p = new int[2]{pos[0],pos[1]};
+                    Chunk* chunk = new Chunk(this->program,this->world,p);
+                    this->world->worldLoader->worldGen.generateChunk(chunk);
+                    chunk->gen_mesh();
+                    chunk->genBuffers(this->world);
+                    //this->world->worldLoader->meshChunk(chunk);
+                    //this->world->setChunk(p,(Chunk*)-1L);
+                    if (this->world->getChunk(pos) && (long)this->world->getChunk(pos)!=-1L) printf("printing stuff %d\n",pos[0]);
+                    //this->world->worldLoader->genChunk(pos);
+                }
+            }
+        }
+    }
 }
 
 void GameLoop::tick() {

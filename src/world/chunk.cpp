@@ -55,7 +55,7 @@ void Chunk::gen_mesh() {
                     int chunkpos[2]{this->pos[0]-1,this->pos[1]};
 
                     Chunk* chunk = this->world->getChunk(chunkpos);
-                    if (chunk) {
+                    if (chunk && (long)chunk!=-1l) {
                         short blockpos[3] {CHUNK_SIZE-1,y,z};
                         block = chunk->get_block(blockpos);
                     }
@@ -72,7 +72,7 @@ void Chunk::gen_mesh() {
                     int chunkpos[2]{this->pos[0]+1,this->pos[1]};
 
                     Chunk* chunk = this->world->getChunk(chunkpos);
-                    if (chunk) {
+                    if (chunk && (long)chunk!=-1l) {
                         short blockpos[3] {0,y,z};
                         block = chunk->get_block(blockpos);
                     }
@@ -89,7 +89,7 @@ void Chunk::gen_mesh() {
                     int chunkpos[2]{this->pos[0],this->pos[1]-1};
 
                     Chunk* chunk = this->world->getChunk(chunkpos);
-                    if (chunk) {
+                    if (chunk && (long)chunk!=-1l) {
                         short blockpos[3] {x,y,CHUNK_SIZE-1};
                         block = chunk->get_block(blockpos);
                     }
@@ -106,7 +106,7 @@ void Chunk::gen_mesh() {
                     int chunkpos[2]{this->pos[0],this->pos[1]+1};
 
                     Chunk* chunk = this->world->getChunk(chunkpos);
-                    if (chunk) {
+                    if (chunk && (long)chunk!=-1l) {
                         short blockpos[3] {x,y,0};
                         block = chunk->get_block(blockpos);
                     }
@@ -175,7 +175,7 @@ void Chunk::gen_mesh() {
     
 }
 
-void Chunk::genBuffers() {
+void Chunk::genBuffers(World* world) {
     this->count = this->_count;
 
     glUseProgram(this->program);
@@ -187,6 +187,7 @@ void Chunk::genBuffers() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int) * 6, this->indices, GL_STATIC_DRAW);
 
+    if (!ready) world->setChunk(this->pos,this);
     this->ready = true;
 
     delete this->vertices;

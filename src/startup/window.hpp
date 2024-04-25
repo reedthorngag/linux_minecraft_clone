@@ -18,8 +18,6 @@
 #ifndef _WINDOW_SETUP
 #define _WINDOW_SETUP
 
-extern GLuint program;
-
 extern Display                 *dpy;
 extern Window                  root;
 extern GLint                   att[];

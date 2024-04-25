@@ -1,7 +1,5 @@
 #include "window.hpp"
 
-GLuint program;
-
 Display                 *dpy;
 Window                  root;
 GLint                   att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };

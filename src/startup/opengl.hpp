@@ -3,6 +3,8 @@
 
 #include "window.hpp"
 
+GLuint program;
+
 void debugCallback(GLenum source,
                       GLenum type,
                       GLuint id,

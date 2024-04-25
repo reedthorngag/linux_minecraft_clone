@@ -38,7 +38,7 @@ class GameLoop {
     public:
         GLuint program;
 
-        GameLoop();
+        GameLoop(GLuint program);
 
         void start();
         void pause();

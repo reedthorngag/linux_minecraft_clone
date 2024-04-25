@@ -8,7 +8,7 @@ class Camera {
     public:
         glm::vec3 pos;
         glm::vec3 origin;
-        glm::vec3 direction = glm::vec3(0,0,1);
+        glm::vec3 direction = glm::vec3(1,0,0);
         int rotationX = 0;
         int rotationY = 0;
         glm::mat4 perspective;
