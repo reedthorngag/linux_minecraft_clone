@@ -10,29 +10,20 @@
 #include <glm/ext.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <chrono>
+#include <unistd.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-#include "../shader.hpp"
+#include "../util/shader_loader.hpp"
 #include "../world/chunk.hpp"
 #include "../player/camera.hpp"
 #include "../world/world.hpp"
 #include "../world/generation/world_gen.hpp"
 #include "../world/world_loader.hpp"
-#include <unistd.h>
+#include "game_loop.hpp"
 
-extern ChunkMap chunks;
-
-int width = 800;
-int height = 600;
-
-int halfWidth = width/2;
-int halfHeight = height/2;
-
-typedef std::chrono::high_resolution_clock Clock;
-Clock::time_point lastTick;
-int tickTime = 10;
+#include "globals.hpp"
 
 
 Display                 *dpy;
@@ -46,14 +37,8 @@ GLXContext              glc;
 XWindowAttributes       gwa;
 XEvent                  xev;
 
-bool keys[255];
-
 GLuint program;
 Camera* camera;
-
-unsigned int VBO;
-unsigned int VAO;
-unsigned int EBO;
 
 int imgWidth, imgHeight, nrChannels;
 unsigned char *imgData = stbi_load("textures/blocks.png", &imgWidth, &imgHeight, &nrChannels, 0);
@@ -75,36 +60,9 @@ void DebugCallbackARB(GLenum source,
     printf("debug callback: %s\n",message);
 }
 
-float speed = 0.1;
-float speed_scale = 5;
 
 void tick() {
-    lastTick = Clock::now();
-
-    if (keys[25]) // w
-        camera->move(camera->direction * (glm::vec3(speed,speed,speed) * glm::vec3(keys[50]?speed_scale:1)));
     
-    if (keys[38]) // a
-        camera->move(glm::cross(glm::vec3(0,1,0),camera->direction*(glm::vec3(speed,speed,speed)*glm::vec3(keys[50]?speed_scale:1))));
-
-    if (keys[39]) // s
-        camera->move(-camera->direction*(glm::vec3(speed,speed,speed)*glm::vec3(keys[50]?speed_scale:1)));
-    
-    if (keys[40]) // d
-        camera->move(glm::cross(glm::vec3(0,1,0),-camera->direction*(glm::vec3(speed,speed,speed)*glm::vec3(keys[50]?speed_scale:1))));
-
-
-    if (keys[111]) // up
-        camera->rotateY(-1);
-    
-    if (keys[116]) // down
-        camera->rotateY(1);
-
-    if (keys[113]) // left
-        camera->rotateX(1);
-    
-    if (keys[114]) // right
-        camera->rotateX(-1);
 }
 
 void render() {

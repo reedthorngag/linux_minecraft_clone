@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "shader.hpp"
+#include "shader_loader.hpp"
 
 unsigned int loadShader(const char* file, int type) {
     GLuint shader = glCreateShader(type);

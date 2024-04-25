@@ -2,7 +2,7 @@
 
 #include "world.hpp"
 
-Chunk* ChunkMap::getChunk(int pos[2]) {
+Chunk* World::getChunk(int pos[2]) {
     std::string s;
     s += pos[0];
     s += ',';
@@ -10,7 +10,7 @@ Chunk* ChunkMap::getChunk(int pos[2]) {
     return _chunks[s];
 }
 
-void ChunkMap::setChunk(int pos[2], Chunk* chunk) {
+void World::setChunk(int pos[2], Chunk* chunk) {
     std::string s;
     s += pos[0];
     s += ',';
@@ -18,4 +18,4 @@ void ChunkMap::setChunk(int pos[2], Chunk* chunk) {
     _chunks[s] = chunk;
 }
 
-ChunkMap chunks;
+World chunks;

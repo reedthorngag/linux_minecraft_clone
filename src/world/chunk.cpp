@@ -9,7 +9,7 @@
 #include "blocks.hpp"
 #include "world.hpp"
 
-extern ChunkMap chunks;
+extern World chunks;
 
 void Chunk::render() {
 
