@@ -85,6 +85,8 @@ void GameLoop::render(long long int ms) {
     glClearColor(0.0, 0.65, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glUseProgram(this->program);
+
     this->activeCamera->updateUniforms();
 
     int posX = ((long)this->activeCamera->pos[0])/CHUNK_SIZE;
@@ -109,9 +111,7 @@ void GameLoop::generateChunks() {
         for (int y=posY-RENDER_DISTANCE;y<posY+RENDER_DISTANCE;y++) {
             int pos[2]{x,y};
             if (!this->world->getChunk(pos)) {
-                int* p = new int[2]{pos[0],pos[1]};
-                this->world->setChunk(p,(Chunk*)-1L);
-                this->world->worldLoader->genChunk(p);
+                this->world->worldLoader->genChunk(pos);
             }
         }
     }

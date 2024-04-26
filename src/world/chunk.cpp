@@ -1,8 +1,6 @@
 #include "chunk.hpp"
 
 void Chunk::render() {
-
-    glUseProgram(this->program);
     
     GLuint model_loc = glGetUniformLocation(program, "model");
 

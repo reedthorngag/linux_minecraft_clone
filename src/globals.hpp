@@ -16,7 +16,7 @@ const int tickTime = 50;
 const float speed = 0.05;
 const float speed_scale = 5;
 
-const int RENDER_DISTANCE = 8;
+const int RENDER_DISTANCE = 12;
 const int CHUNK_SIZE = 32;
 const int CHUNK_HEIGHT = 256;
 

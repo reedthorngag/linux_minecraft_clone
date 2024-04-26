@@ -26,8 +26,7 @@ void* WorldLoader::genThread(void* data) {
         Chunk* chunk = parent->genQueue.pop();
         if (parent->die || !chunk) return nullptr;
         parent->worldGen.generateChunk(chunk);
-        chunk->gen_mesh();
-        parent->genBufferQueue.push(chunk);
+        parent->meshingQueue.push(chunk);
     }
 
     return nullptr;
@@ -39,8 +38,9 @@ void WorldLoader::meshChunk(Chunk* chunk) {
 
 void WorldLoader::genChunk(int pos[2]) {
 
-    Chunk* chunk = new Chunk(this->world->gameLoop->program,this->world,pos);
-    this->world->setChunk(pos,(Chunk*)-1l);
+    int* p = new int[2]{pos[0],pos[1]};
+    this->world->setChunk(p,(Chunk*)-1l);
+    Chunk* chunk = new Chunk(this->world->gameLoop->program,this->world,p);
 
     this->genQueue.push(chunk);
 }

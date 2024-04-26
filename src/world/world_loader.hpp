@@ -6,8 +6,8 @@
 #ifndef _WORLD_LOADER
 #define _WORLD_LOADER
 
-const int NUM_MESHING_THREADS = 6;
-const int NUM_GEN_THREADS = 6;
+const int NUM_MESHING_THREADS = 8;
+const int NUM_GEN_THREADS = 8;
 
 struct Chunk;
 struct World;
